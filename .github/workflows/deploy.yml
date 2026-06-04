@@ -7,11 +7,9 @@ on:
 
 jobs:
   deploy:
-
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout Source
         uses: actions/checkout@v4
 
@@ -23,9 +21,6 @@ jobs:
 
       - name: Build Application
         run: mvn clean package -DskipTests
-
-      - name: Verify Build
-        run: ls -lrt target/
 
       - name: Copy JAR to EC2
         uses: appleboy/scp-action@v0.1.7
@@ -43,19 +38,14 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            echo "Stopping old application..."
-            pkill -f JtSpringProject || true
+            JAR=$(find /home/ubuntu/deploy/target -name "*.jar" | head -1)
 
-            echo "Checking JAR..."
-            ls -lrt /home/ubuntu/deploy/target/
+            echo "Using JAR: $JAR"
 
-            echo "Starting application..."
-            nohup java -jar /home/ubuntu/deploy/target/JtSpringProject-0.0.1-SNAPSHOT.jar > /home/ubuntu/app.log 2>&1 &
+            nohup java -jar "$JAR" > /home/ubuntu/app.log 2>&1 &
 
             sleep 20
 
-            echo "Running Java Processes:"
             ps -ef | grep java
 
-            echo "Application Logs:"
-            tail -50 /home/ubuntu/app.log
+            tail -20 /home/ubuntu/app.log
