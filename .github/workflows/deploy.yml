@@ -1,51 +1,72 @@
 name: Spring Boot CI/CD
 
 on:
-  push:
-    branches:
-      - main
+push:
+branches:
+- main
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+deploy:
+runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout Source
-        uses: actions/checkout@v4
+```
+steps:
+  - name: Checkout Source
+    uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
+  - name: Setup Java
+    uses: actions/setup-java@v4
+    with:
+      distribution: temurin
+      java-version: '17'
 
-      - name: Build Application
-        run: mvn clean package -DskipTests
+  - name: Build Application
+    run: mvn clean package -DskipTests
 
-      - name: Copy JAR to EC2
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: "target/*.jar"
-          target: "/home/ubuntu/deploy"
+  - name: Debug Workspace
+    run: |
+      echo "Current Directory:"
+      pwd
 
-      - name: Deploy Application
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            JAR=$(find /home/ubuntu/deploy/target -name "*.jar" | head -1)
+      echo "Project Files:"
+      ls -la
 
-            echo "Using JAR: $JAR"
+      echo "Target Directory:"
+      ls -la target || true
 
-            nohup java -jar "$JAR" > /home/ubuntu/app.log 2>&1 &
+      echo "Generated JAR Files:"
+      find . -name "*.jar"
 
-            sleep 20
+  - name: Copy JAR to EC2
+    uses: appleboy/scp-action@v0.1.7
+    with:
+      host: ${{ secrets.EC2_HOST }}
+      username: ${{ secrets.EC2_USER }}
+      key: ${{ secrets.EC2_SSH_KEY }}
+      source: "target/*.jar"
+      target: "/home/ubuntu/deploy"
 
-            ps -ef | grep java
+  - name: Deploy Application
+    uses: appleboy/ssh-action@v1.0.3
+    with:
+      host: ${{ secrets.EC2_HOST }}
+      username: ${{ secrets.EC2_USER }}
+      key: ${{ secrets.EC2_SSH_KEY }}
+      script: |
+        echo "Checking deployed files..."
+        find /home/ubuntu/deploy -name "*.jar"
 
-            tail -20 /home/ubuntu/app.log
+        JAR=$(find /home/ubuntu/deploy -name "*.jar" | head -1)
+
+        echo "Using JAR: $JAR"
+
+        nohup java -jar "$JAR" > /home/ubuntu/app.log 2>&1 &
+
+        sleep 20
+
+        echo "Running Java Processes:"
+        ps -ef | grep java
+
+        echo "Last 30 Log Lines:"
+        tail -30 /home/ubuntu/app.log
+```
