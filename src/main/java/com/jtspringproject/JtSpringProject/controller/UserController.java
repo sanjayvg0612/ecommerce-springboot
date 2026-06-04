@@ -37,11 +37,6 @@ public class UserController {
 		return "register";
 	}
 
-	@GetMapping("/buy")
-	public String buy() {
-		return "buy";
-	}
-
 	@GetMapping("/login")
 	public ModelAndView userLogin(@RequestParam(required = false) String error) {
 		ModelAndView mv = new ModelAndView("userLogin");

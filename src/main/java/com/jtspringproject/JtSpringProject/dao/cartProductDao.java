@@ -56,5 +56,17 @@ public class cartProductDao {
     public void deleteCartProduct(CartProduct cartProduct) {
         this.sessionFactory.getCurrentSession().delete(cartProduct);
     }
+
+    @Transactional
+    public void deleteCartProductsByCartID(Integer cartId) {
+        try {
+            this.sessionFactory.getCurrentSession()
+                    .createQuery("delete from CartProduct cp where cp.cart.id = :cartId")
+                    .setParameter("cartId", cartId)
+                    .executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
 

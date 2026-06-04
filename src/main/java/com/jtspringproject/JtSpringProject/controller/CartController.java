@@ -137,4 +137,52 @@ public class CartController {
 
 		return "redirect:/cart";
 	}
+
+	@GetMapping("/buy")
+	public ModelAndView checkoutGet() {
+		ModelAndView mv = new ModelAndView("buy");
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		User user = userService.getUserByUsername(username);
+
+		if (user == null) {
+			mv.setViewName("redirect:/login");
+			return mv;
+		}
+
+		Cart cart = cartService.getCartByCustomer(user);
+		if (cart == null) {
+			mv.setViewName("redirect:/cart");
+			return mv;
+		}
+
+		List<Product> products = cartProductDao.getProductByCartID(cart.getId());
+		int totalPrice = 0;
+		for (Product p : products) {
+			totalPrice += p.getPrice();
+		}
+
+		mv.addObject("products", products);
+		mv.addObject("totalPrice", totalPrice);
+		mv.addObject("username", username);
+		mv.addObject("email", user.getEmail());
+		mv.addObject("address", user.getAddress());
+		return mv;
+	}
+
+	@PostMapping("/buy")
+	public ModelAndView checkoutPost() {
+		ModelAndView mv = new ModelAndView("redirect:/");
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		User user = userService.getUserByUsername(username);
+
+		if (user != null) {
+			Cart cart = cartService.getCartByCustomer(user);
+			if (cart != null) {
+				cartProductDao.deleteCartProductsByCartID(cart.getId());
+			}
+		}
+
+		mv.addObject("msg", "Order placed successfully! Thank you for shopping with us.");
+		return mv;
+	}
 }
