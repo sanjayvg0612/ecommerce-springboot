@@ -62,12 +62,23 @@ jobs:
 
             echo "Using WAR: $WAR"
 
+            echo "Stopping any existing application on port 8080..."
+            sudo fuser -k 8080/tcp || true
+            PID=$(lsof -t -i:8080)
+            if [ ! -z "$PID" ]; then
+                echo "Force killing process on port 8080: $PID"
+                kill -9 $PID || true
+            fi
+
+            echo "Starting new application..."
             nohup java -jar "$WAR" > /home/ubuntu/app.log 2>&1 &
 
+            echo "Waiting for application to start..."
             sleep 20
 
             echo "Running Java Processes:"
             ps -ef | grep java
 
             echo "Application Logs:"
-            tail -30 /home/ubuntu/app.log
+            tail -50 /home/ubuntu/app.log
+
