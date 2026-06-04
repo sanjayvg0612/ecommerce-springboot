@@ -1,124 +1,144 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page import="java.sql.*"%>
 
 <!doctype html>
-<%@page import="java.sql.*"%>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport"
-	content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
-<link rel="stylesheet"
-	href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-	integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-	crossorigin="anonymous">
-<link rel="stylesheet"
-	href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
-	integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ"
-	crossorigin="anonymous">
-<title>Document</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <!-- Bootstrap & FontAwesome CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="/css/style.css">
+    
+    <title>Update Product - Admin</title>
 </head>
 <body>
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-		<div class="container-fluid">
-			<a class="navbar-brand" href="#"> <img
-				th:src="@{/images/logo.png}" src="../static/images/logo.png"
-				width="auto" height="40" class="d-inline-block align-top" alt="" />
-			</a>
-			<button class="navbar-toggler" type="button" data-toggle="collapse"
-				data-target="#navbarSupportedContent"
-				aria-controls="navbarSupportedContent" aria-expanded="false"
-				aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
 
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul class="navbar-nav mr-auto"></ul>
-				<ul class="navbar-nav">
-					<li class="nav-item active"><a class="nav-link"
-						href="/dashboard" >Home Page</a></li>
-					<li class="nav-item active"><a class="nav-link"
-						href="/logout" >Logout</a></li>
-				</ul>
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/admin/">
+            <i class="fas fa-tools mr-2"></i>Admin Panel
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" 
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-			</div>
-		</div>
-	</nav><br>
-	<div class="jumbotron container border border-info">
-		<h3>Update Existing Product</h3>
-		<form action="/admin/products/update/${product.id}" method="post">
-			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-			<div class="row">
-				<div class="col-sm-5">
-					
-					<div class="form-group">
-						<label for="name">Id</label> 
-						<input type="number" readonly="readonly" class="form-control border border-success" name="id"  value="${product.id}">
-						
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link nav-link-custom" href="/admin/">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-custom" href="/admin/profileDisplay">Profile</a>
+                </li>
+                <li class="nav-item ml-2">
+                    <a class="btn btn-danger-custom py-2 px-3" href="/admin/logout">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
-					</div>
-					<div class="form-group">
-						<label for="name">Name</label> 
-						<input type="text" class="form-control border border-success" required name="name" value="${product.name }" placeholder="Enter name">
-					</div>
-					
-					<div class="form-group">
-					
-						<label for="category">Select Category</label> 
-						<select class="form-control border border-success" name="categoryid" readonly>
-							<option selected>Select a Category</option>
-                            							<c:forEach var="category" items="${categories}">
-                            								<option value="${category.id}">${category.name}</option>
-                            							</c:forEach>
-						</select>
-					</div>
-					<div class="form-group">
-						<label for="price">Price</label> 
-						<input type="number" class="form-control border border-success" required name="price" value="${ product.price }" min="1" placeholder="Price">
-					</div>
-					<div class="form-group">
-						<label for="weight">Weight in grams</label> 
-						<input type="number" class="form-control border border-success" required name="weight" value="${product.weight }" min="1" placeholder="Weight">
-					</div>
-					<div class="form-group">
-						<label for="weight">Available Quantity</label> 
-						<input type="number" class="form-control border border-success" required name="quantity" value="${ product.quantity }" min="1" placeholder="Quantity">
-					</div>
-					
-					
-				</div>
-				
-				<div class="col-sm-5">
-				<div class="form-group">
-						<label for="description">Product Description</label>
-					<textarea class="form-control border border-success" rows="4" name="description" placeholder="Product Details">${product.description}</textarea>
-					</div>
-					<p>Product Image</p>
-					<div class="form-group">
-						<label for="productImage">Image Link</label>
-						<input type="text" class="form-control border border-success" id="productImage" name="productImage" value="${product.image}" required>
-					</div>
-					<div class="form-group">
-						<img src="${product.image}" id="imgPreview" height="100px" width="100px"
-							style="margin-top: 20px" alt=" ">
-					</div>
-					<input type="hidden" name="imgName">
-					<input type="submit" value="Update Details" class="btn btn-primary">
-				</div>
-			</div>
-		</form>
-	</div>
+<main class="container my-5 d-flex justify-content-center">
+    <div class="glass-panel w-100" style="max-width: 800px;">
+        <h2 class="font-weight-bold mb-4" style="background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            <i class="fas fa-edit mr-2"></i>Update Product Details
+        </h2>
+        
+        <form action="/admin/products/update/${product.id}" method="post">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="id" class="text-secondary font-weight-bold">Product ID</label>
+                        <input type="number" readonly class="form-control form-control-custom" name="id" id="id" value="${product.id}">
+                    </div>
 
-	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-		integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-		crossorigin="anonymous"></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-		integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-		crossorigin="anonymous"></script>
-	<script
-		src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-		integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-		crossorigin="anonymous"></script>
+                    <div class="form-group">
+                        <label for="name" class="text-secondary font-weight-bold">Product Name</label>
+                        <input type="text" class="form-control form-control-custom" required name="name" id="name" value="${product.name}" placeholder="Enter product name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="categoryid" class="text-secondary font-weight-bold">Category</label>
+                        <select class="form-control form-control-custom" name="categoryid" id="categoryid" style="color: var(--text-primary);">
+                            <option value="${product.category.id}" selected>${product.category.name} (Current)</option>
+                            <c:forEach var="category" items="${categories}">
+                                <c:if test="${category.id != product.category.id}">
+                                    <option value="${category.id}">${category.name}</option>
+                                </c:if>
+                            </c:forEach>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="price" class="text-secondary font-weight-bold">Price ($)</label>
+                        <input type="number" class="form-control form-control-custom" required name="price" id="price" value="${product.price}" min="1" placeholder="Enter price">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="weight" class="text-secondary font-weight-bold">Weight (grams)</label>
+                        <input type="number" class="form-control form-control-custom" required name="weight" id="weight" value="${product.weight}" min="1" placeholder="Enter weight in grams">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quantity" class="text-secondary font-weight-bold">Available Quantity</label>
+                        <input type="number" class="form-control form-control-custom" required name="quantity" id="quantity" value="${product.quantity}" min="1" placeholder="Enter quantity">
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="description" class="text-secondary font-weight-bold">Product Description</label>
+                        <textarea class="form-control form-control-custom" rows="4" name="description" id="description" placeholder="Enter product details" required>${product.description}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productImage" class="text-secondary font-weight-bold">Product Image URL</label>
+                        <input type="text" class="form-control form-control-custom" required name="productImage" id="productImage" value="${product.image}" placeholder="Enter direct image link">
+                    </div>
+
+                    <div class="form-group text-center">
+                        <p class="text-secondary font-weight-bold text-left">Image Preview</p>
+                        <div class="p-3 d-inline-block rounded" style="background: rgba(255,255,255,0.02); border: 1px dashed var(--border-glass);">
+                            <img src="${product.image}" alt="Preview" id="imgPreview" class="img-preview" height="120px" width="120px" onerror="this.src='https://via.placeholder.com/150?text=No+Image'">
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-4">
+                        <a href="/admin/products" class="btn btn-secondary-custom mr-2 py-3 px-4">Cancel</a>
+                        <button type="submit" class="btn btn-primary-custom py-3 px-4">Update Details</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer class="text-center py-4 border-top mt-5" style="border-color: var(--border-glass) !important; background: rgba(10, 11, 14, 0.5);">
+    <div class="container">
+        <p class="text-secondary mb-0">&copy; 2026 Perishable Shop. All rights reserved.</p>
+    </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+<script>
+    document.getElementById('productImage').addEventListener('input', function(e) {
+        var preview = document.getElementById('imgPreview');
+        preview.src = e.target.value.trim() || 'https://via.placeholder.com/150?text=No+Image';
+    });
+</script>
 </body>
 </html>

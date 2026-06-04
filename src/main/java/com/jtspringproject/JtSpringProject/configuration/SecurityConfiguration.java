@@ -58,7 +58,7 @@ public class SecurityConfiguration {
 		@Bean
 		SecurityFilterChain userFilterChain(HttpSecurity http) throws Exception {
 			http.authorizeHttpRequests(requests -> requests
-					.antMatchers("/login", "/register", "/newuserregister").permitAll()
+					.antMatchers("/login", "/register", "/newuserregister", "/css/**", "/js/**", "/images/**").permitAll()
 					.antMatchers("/**").hasRole("USER"))
 					.formLogin(login -> login
 							.loginPage("/login")

@@ -3,6 +3,7 @@ package com.jtspringproject.JtSpringProject.dao;
 import java.util.List;
 
 import com.jtspringproject.JtSpringProject.models.Cart;
+import com.jtspringproject.JtSpringProject.models.User;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,18 @@ public class cartDao {
     }
 
     @Transactional
+    public Cart getCartByCustomer(User customer) {
+        try {
+            return this.sessionFactory.getCurrentSession()
+                    .createQuery("from CART where customer = :customer", Cart.class)
+                    .setParameter("customer", customer)
+                    .uniqueResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Transactional
     public void updateCart(Cart cart) {
         this.sessionFactory.getCurrentSession().update(cart);
     }
@@ -36,3 +49,4 @@ public class cartDao {
         this.sessionFactory.getCurrentSession().delete(cart);
     }
 }
+

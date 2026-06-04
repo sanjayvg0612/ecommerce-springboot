@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.jtspringproject.JtSpringProject.models.CartProduct;
+import com.jtspringproject.JtSpringProject.models.CartProductId;
 import com.jtspringproject.JtSpringProject.models.Product;
 
 import org.hibernate.SessionFactory;
@@ -30,22 +31,20 @@ public class cartProductDao {
     }
 
     @Transactional
-    public List<Product> getProductByCartID(Integer cart_id) {
-        String sql = "SELECT product_id FROM cart_product WHERE cart_id = :cart_id";
-        List<Integer> productIds = this.sessionFactory.getCurrentSession()
-                .createNativeQuery(sql)
-                .setParameter("cart_id", cart_id)
-                .list();
+    public CartProduct getCartProduct(CartProductId id) {
+        return this.sessionFactory.getCurrentSession().get(CartProduct.class, id);
+    }
 
-        if (productIds.isEmpty()) {
+    @Transactional
+    public List<Product> getProductByCartID(Integer cart_id) {
+        try {
+            return this.sessionFactory.getCurrentSession()
+                    .createQuery("select cp.product from CartProduct cp where cp.cart.id = :cart_id", Product.class)
+                    .setParameter("cart_id", cart_id)
+                    .list();
+        } catch (Exception e) {
             return Collections.emptyList();
         }
-
-        sql = "SELECT * FROM product WHERE id IN (:product_ids)";
-        return this.sessionFactory.getCurrentSession()
-                .createNativeQuery(sql, Product.class)
-                .setParameterList("product_ids", productIds)
-                .list();
     }
 
     @Transactional
@@ -58,3 +57,4 @@ public class cartProductDao {
         this.sessionFactory.getCurrentSession().delete(cartProduct);
     }
 }
+

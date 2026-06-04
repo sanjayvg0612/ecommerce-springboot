@@ -1,74 +1,66 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <!-- Bootstrap & FontAwesome CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
-    <title>User Login</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f8f9fa;
-        }
-        .login-container {
-            max-width: 400px;
-            width: 100%;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            border-radius: 8px;
-            background: white;
-        }
-        .login-container .jumbotron {
-            border-radius: 8px;
-        }
-        .input-group-text {
-            background-color: #007bff;
-            color: white;
-            border-radius: 0.25rem 0 0 0.25rem;
-        }
-        .input-group-prepend .input-group-text {
-            border-right: 0;
-        }
-        .form-control {
-            border-radius: 0 0.25rem 0.25rem 0;
-        }
-    </style>
+    
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="/css/style.css">
+    
+    <title>User Login - Perishable Shop</title>
 </head>
 <body>
 
-<div class="login-container p-4">
-    <div class="jumbotron border p-4">
-        <h2 class="text-center">User Login</h2>
+<div class="auth-container">
+    <div class="glass-panel auth-card">
+        <div class="text-center mb-4">
+            <h2 class="font-weight-bold mb-2" style="background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                <i class="fas fa-shopping-basket mr-2"></i>Perishable Shop
+            </h2>
+            <p class="text-secondary">Welcome back! Please login to your account</p>
+        </div>
+
         <form action="/userloginvalidate" method="post">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            
             <div class="form-group">
-                <label for="username">Username</label>
+                <label for="username" class="text-secondary font-weight-bold">Username</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        <span class="input-group-text input-group-text-custom"><i class="fas fa-user"></i></span>
                     </div>
-                    <input type="text" name="username" id="username" placeholder="Username*" required class="form-control form-control-lg">
+                    <input type="text" name="username" id="username" placeholder="Enter your username" required class="form-control form-control-custom">
                 </div>
             </div>
+            
             <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password" class="text-secondary font-weight-bold">Password</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <span class="input-group-text input-group-text-custom"><i class="fas fa-lock"></i></span>
                     </div>
-                    <input type="password" class="form-control form-control-lg" placeholder="Password*" required name="password" id="password">
+                    <input type="password" name="password" id="password" placeholder="Enter your password" required class="form-control form-control-custom">
                 </div>
             </div>
-            <span>Don't have an account? <a class="linkControl" href="/register">Register here</a></span> <br><br>
-            <input type="submit" value="Login" class="btn btn-primary btn-block">
-            <h3 class="text-center text-danger mt-3">${msg}</h3>
+            
+            <button type="submit" class="btn btn-primary-custom btn-block py-3 mt-4">
+                <i class="fas fa-sign-in-alt mr-2"></i>Login
+            </button>
+            
+            <div class="text-center mt-3">
+                <span class="text-secondary">Don't have an account? <a href="/register" style="color: var(--color-primary); font-weight: 500;">Register here</a></span>
+            </div>
+            
+            <c:if test="${not empty msg}">
+                <h5 class="text-center text-danger mt-3 font-weight-bold"><i class="fas fa-exclamation-circle mr-1"></i>${msg}</h5>
+            </c:if>
         </form>
     </div>
 </div>
